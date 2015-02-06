@@ -4,14 +4,18 @@ import math
 a = 1
 c = 10
 
-for u in range(0,100):
-    for v in range(0,100):
-        x=(c+a*math.cos(v))*math.cos(u)
-        y=(c+a*math.cos(v))*math.sin(u)
-        z=a*math.sin(v)
-        rs.AddPoint(x,y,z)
-        pt = rs.AddPoint
+rs.EnableRedraw(False)
 
+for u in range(0,50):
+    for v in range(0,50):
+        x = (c+a*math.cos(v))*math.cos(u)
+        y = (c+a*math.cos(v))*math.sin(u)
+        z = a*math.sin(v)
+        pt = rs.AddPoint(x,y,z)
+        print z
+        sphere = rs.AddSphere(pt,z)
+
+rs.EnableRedraw(True)
 
 
 
