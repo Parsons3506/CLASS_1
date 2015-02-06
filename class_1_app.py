@@ -13,7 +13,7 @@ for u in range(0,50):
         z = a*math.sin(v)
         pt = rs.AddPoint(x,y,z)
         print z
-        sphere = rs.AddSphere(pt,z)
+        sphere = rs.AddSphere([x,y,z],z)
 
 rs.EnableRedraw(True)
 
