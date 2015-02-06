@@ -1,5 +1,8 @@
-x = "hello"
+import rhinoscriptsyntax as rs
 
-y= "world"
 
-print x+y
+x=0
+y = 0
+z = 0
+
+pt = rs.AddPoint(x,y,z)
