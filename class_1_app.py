@@ -2,7 +2,7 @@ import rhinoscriptsyntax as rs
 import math
 import random
 
-deff main ():
+def main():
     
     pt = rs.AddPoint(0,0,0)
     vecDir = [0,0,1]
@@ -63,6 +63,6 @@ def RecursiveGrowth(ptStart, vecDir, props, gen):
             
             
             
-            if name == "__main__":
+            if __name__ == "__main__":
                 main()
             
