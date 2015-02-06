@@ -1,22 +1,29 @@
-import rhinoscriptsyntax as rs
+import rhinoscriptsyntaxas rs
 import math
 
-a = 10
-c = 8
 
-
-rs.EnableRedraw(False)
-for u in range (0,100):
-    for v in range (0,100):
-        x = (c+a*math.cos (v))*math.cos(u)
-        y = (c+a*math.cos(v))*math.sin (u)
-        z = a*math.sin (v)
-        pt = rs.AddPoint(x,y,z)
-        print(z)
-        sphere = rs.AddSphere([x,y,z],z)
+def RecursiveGrowth (ptStart, vecDir, props, gen):
+    minTwigCont, maxTwigCount, maxGen, maxTwiglength, lengthMutation, angleMtation = props
+    
+    if gen > maxGen : return
+    
+    newProps = props
+    
+    maxTwigLength *= lengthMutation
+    maxTwigAngle *= angleMutation
+    
+    if maxTwigAngle>90:maxTwigAngle=90
+    
+    newProps = minTwigCont, maxTwigCount, maxGen, maxTwiglength, lengthMutation, angleMtation = props
+    
+    maxN=int (minTwigCount+random.random()* (maxTwigCount-minTwigCount) )
+    
+    
+    for n in range (0, maxN)
+        newPoint = RandomPointInCone (ptStart, vecDir, .25*maxTwigLength, maxTwigLength, maxTwigAngle
         
-
-rs.EnableRedraw(True)
-
+        newTwig = AddArchDir (ptStart, newPoint, vecDir)
+        if newTwig:
+                vecGrow = rs.CurveTangent (newTwigm 
 
 
