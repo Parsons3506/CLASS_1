@@ -1,4 +1,7 @@
-x = "HI KEVIN"
+import rhinoscriptsyntax as rs
 
-if(x=="HI KEVIN"):
-    print x
+x = 0
+y = 0
+z = 0
+
+rs.AddPoint(x,y,z)
