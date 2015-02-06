@@ -1,6 +1,44 @@
 import rhinoscriptsyntax as rs
 import math
 
+def main():
+    ptStart = rs.AddPoint(0,0,0)
+    vecDir = [0,0,1]
+    
+    minTwigCount = 1
+    maxTwigCOunt = 3
+    maxGen = 3
+    maxTwigLength = 10
+    lengthMutation = .5
+    maxTwigAngle = 90
+    angleMutution = .5
+    
+    
+    props = minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation, maxTwigAngle, angleMutation
+
+def AddArcDir(ptStart, ptEnd, vecDir):
+    vecBase = rs.PointSubtract(ptEnd, ptStart)
+    if rs.VectorLength(vecBase)==0.0: return
+    if rs.IsVectorParallelTo(vecBase, vecDir): return
+    vecBase = rs.VectorUnitize(vecBase)
+    vecDir = rs.VectorUnitize(vecDir)
+    vecBisector = rs.VectorAdd(vecDir, vecBase)
+    vecBisector = rs.VectorUnitize(vecBisector)
+    dotProd = rs.VectorDotProduct(vecBisector, vecDir)
+    midLength = (0.5*rs.Distance(ptStart, ptEnd))/dotProd
+    vecBisector = rs.VectorScale(vecBisector, midLength)
+    return rs.AddArc3Pt(ptStart, rs.PointAdd(ptStart, vecBisector), ptEnd)
+
+
+def RandomPointInCone(origin, direciton, minDistance, maxDistance, maxAngle):
+    vecTwig = rs.VectorUnitize(direction)
+    vecTwig = rs.VectorScale(vecTwig, minDistance + random.random()*(maxDistance-minDistance)
+    MutationPlane = rs.PlaneFromNormal((0,0,0), vecTwig)
+    vecTwig = rs.VectorRotate(vecTwig, random.random()*maxAngle, MutationPlane[1])
+    vecTwig = rs.VectorRotate(vecTwig, random.random()*360, direction)
+    return rs.PointAdd(origin, vecTwig)
+
+
 
 def RecursiveGrowth(ptStart, vecDir, props, gen):
     minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation, maxTwigAngle, angleMutation = props
@@ -22,3 +60,8 @@ def RecursiveGrowth(ptStart, vecDir, props, gen):
         newTwig = AddArcDir(ptStart, newPoint, vecDir)
         if newTwig: 
             vecGrow = rs.CurveTangent(newTwig, rs.CurveDomain(newTwig)[1])
+            RecursiveGrowth(newPoint, vecGrow, newProps, gen+1)
+            
+
+if __name__ == "__main__":
+    main ()
