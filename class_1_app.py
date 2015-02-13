@@ -6,8 +6,8 @@ import random
 
 def main():
     
-    attractorPoint = rs.GetPoint("select point please")
-    if attractorPoint is None:return
+    attractorMesh = rs.GetObject("select mesh please",32)
+    if attractorMesh is None:return
     
     
     ptStart = rs.AddPoint(0,0,0)
@@ -15,17 +15,20 @@ def main():
     
     minTwigCount = 1 
     maxTwigCount = 10
-    maxGen = 4
-    maxTwigLength = 10
+    maxGen = 40
+    maxTwigLength = 30
     lengthMutation = .5
-    maxTwigAngle = 90
-    angleMutation = .25
+    maxTwigAngle = 180
+    angleMutation = .5
     
     
     props = minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation
     
-    RecursiveGrowth(ptStart, vecDir, props, 0, attractorPoint)
+    RecursiveGrowth(ptStart, vecDir, props, 0, attractorMesh)
 
+def getClosestPointOnMesh (point, mesh):
+    data = rs.MeshClosestPoint(mesh,point)
+    return data[0]
 
 def AddArcDir(ptStart, ptEnd, vecDir):
     vecBase = rs.PointSubtract(ptEnd, ptStart)
@@ -53,7 +56,7 @@ def RandomPointInCone(origin, direction, minDistance, maxDistance, maxAngle):
 
 
 
-def RecursiveGrowth(ptStart, vecDir, props, gen, attractorPoint):
+def RecursiveGrowth(ptStart, vecDir, props, gen, attractorMesh):
     minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation = props
     
     if gen > maxGen : return
@@ -70,14 +73,15 @@ def RecursiveGrowth(ptStart, vecDir, props, gen, attractorPoint):
     maxN=int(minTwigCount+random.random()* (maxTwigCount-minTwigCount) )
     
     for n in range(0,maxN):
+        meshPoint = getClosestPointOnMesh(ptStart, attractorMesh)
         
-        newVector = rs.VectorCreate(attractorPoint, ptStart)
+        newVector = rs.VectorCreate(meshPoint, ptStart)
         vecDir = newVector
         newPoint = RandomPointInCone(ptStart, vecDir, .25*maxTwigLength, maxTwigLength, maxTwigAngle)
         newTwig = AddArcDir(ptStart, newPoint, vecDir)
         if newTwig:
             vecGrow = rs.CurveTangent(newTwig, rs.CurveDomain(newTwig)[1])
-            RecursiveGrowth(newPoint, vecGrow, newProps, gen+1, attractorPoint)
+            RecursiveGrowth(newPoint, vecGrow, newProps, gen+1, attractorMesh)
             
             
             
