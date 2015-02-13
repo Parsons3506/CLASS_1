@@ -12,9 +12,9 @@ def main():
     vecDir = [0,0,1]
     
     minTwigCount = 1 
-    maxTwigCount = 5
-    maxGen = 1
-    maxTwigLength = 6
+    maxTwigCount = 40
+    maxGen = 30 
+    maxTwigLength = 50
     lengthMutation = .5
     maxTwigAngle = 90
     angleMutation = .5
