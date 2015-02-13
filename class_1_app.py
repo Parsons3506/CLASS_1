@@ -76,7 +76,3 @@ def RecursiveGrowth(ptStart, vecDir, props, gen):
 
 if __name__ == "__main__":
     main()
-
-
-
-
