@@ -9,6 +9,7 @@ def main():
     attractorMesh = rs.GetObject("select Mesh Please",32)
     if attractorMesh is None:return 
     
+    rs.EnableRedraw(False)
     
     ptStart = rs.AddPoint(0,0,0)
     vecDir = [0,0,1]
@@ -25,6 +26,8 @@ def main():
     props = minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation
     
     RecursiveGrowth(ptStart, vecDir, props, 0,attractorMesh)
+    
+    rs.EnableRedraw(True)
 
 def getClosestPointOnMesh(point, mesh):
     data = rs.MeshClosestPoint(mesh,point)
