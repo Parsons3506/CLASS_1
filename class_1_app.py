@@ -9,16 +9,17 @@ def main():
     attractorMesh = rs.GetObject("select mesh please",32)
     if attractorMesh is None:return
     
+    rs.EnableRedraw(False)
     
     ptStart = rs.AddPoint(0,0,0)
     vecDir = [0,0,1]
     
     minTwigCount = 1 
     maxTwigCount = 10
-    maxGen = 40
+    maxGen = 30
     maxTwigLength = 30
     lengthMutation = .5
-    maxTwigAngle = 180
+    maxTwigAngle = 120
     angleMutation = .5
     
     
@@ -83,6 +84,7 @@ def RecursiveGrowth(ptStart, vecDir, props, gen, attractorMesh):
             vecGrow = rs.CurveTangent(newTwig, rs.CurveDomain(newTwig)[1])
             RecursiveGrowth(newPoint, vecGrow, newProps, gen+1, attractorMesh)
             
+            rs.EnableRedraw(True)
             
             
 
