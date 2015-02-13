@@ -6,15 +6,15 @@ import random
 
 def main():
     
-    aPoint = rs.GetPoint("Pick Point")
-    if aPoint is None: return
+    aMesh = rs.GetObject("Pick mesh",32)
+    if aMesh is None: return
     
     ptStart = rs.AddPoint(0,0,0)
     vecDir = [0,0,1]
     
     minTwigCount = 1 
     maxTwigCount = 5
-    maxGen = 10
+    maxGen = 25
     maxTwigLength = 1
     lengthMutation = .5
     maxTwigAngle = 270
@@ -23,8 +23,11 @@ def main():
     
     props = minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation
     
-    RecursiveGrowth(ptStart, vecDir, props, 0, aPoint)
+    RecursiveGrowth(ptStart, vecDir, props, 0, aMesh)
 
+def getClosestPointOnMesh (point, mesh):
+    data = rs.MeshClosestPoint(mesh, point)
+    return data [0]
 
 def AddArcDir(ptStart, ptEnd, vecDir):
     vecBase = rs.PointSubtract(ptEnd, ptStart)
@@ -52,7 +55,7 @@ def RandomPointInCone(origin, direction, minDistance, maxDistance, maxAngle):
 
 
 
-def RecursiveGrowth(ptStart, vecDir, props, gen, aPoint):
+def RecursiveGrowth(ptStart, vecDir, props, gen, aMesh):
     minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation = props
     
     if gen > maxGen : return
@@ -69,13 +72,14 @@ def RecursiveGrowth(ptStart, vecDir, props, gen, aPoint):
     maxN=int(minTwigCount+random.random()* (maxTwigCount-minTwigCount) )
     
     for n in range(0,maxN):
-        newVector = rs.VectorCreate(aPoint, ptStart)
+        meshPoint = getClosestPointOnMesh(ptStart,aMesh)
+        newVector = rs.VectorCreate(meshPoint, ptStart)
         vecDir = newVector
         newPoint = RandomPointInCone(ptStart, vecDir, .25*maxTwigLength, maxTwigLength, maxTwigAngle)
         newTwig = AddArcDir(ptStart, newPoint, vecDir)
         if newTwig:
             vecGrow = rs.CurveTangent(newTwig, rs.CurveDomain(newTwig)[1])
-            RecursiveGrowth(newPoint, vecGrow, newProps, gen+1, aPoint)
+            RecursiveGrowth(newPoint, vecGrow, newProps, gen+1, aMesh)
             
             
             
