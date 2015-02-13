@@ -6,21 +6,25 @@ import random
 
 def main():
     
+    attractorPoint = rs.GetPoint("select point please")
+    if attractorPoint is None:return 
+    
+    
     ptStart = rs.AddPoint(0,0,0)
     vecDir = [0,0,1]
     
     minTwigCount = 1 
-    maxTwigCount = 5
-    maxGen = 5
-    maxTwigLength = 1
-    lengthMutation = .5
-    maxTwigAngle = 90
-    angleMutation = .5
+    maxTwigCount = 10
+    maxGen = 4
+    maxTwigLength = 10
+    lengthMutation = .23
+    maxTwigAngle = 180
+    angleMutation = .25
     
     
     props = minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation
     
-    RecursiveGrowth(ptStart, vecDir, props, 0)
+    RecursiveGrowth(ptStart, vecDir, props, 0,attractorPoint)
 
 
 def AddArcDir(ptStart, ptEnd, vecDir):
@@ -49,7 +53,7 @@ def RandomPointInCone(origin, direction, minDistance, maxDistance, maxAngle):
 
 
 
-def RecursiveGrowth(ptStart, vecDir, props, gen):
+def RecursiveGrowth(ptStart, vecDir, props, gen, attractorPoint):
     minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation = props
     
     if gen > maxGen : return
@@ -66,11 +70,14 @@ def RecursiveGrowth(ptStart, vecDir, props, gen):
     maxN=int(minTwigCount+random.random()* (maxTwigCount-minTwigCount) )
     
     for n in range(0,maxN):
+        
+        newVector = rs.VectorCreate(attractorPoint,ptStart)
+        vecDir=newVector
         newPoint = RandomPointInCone(ptStart, vecDir, .25*maxTwigLength, maxTwigLength, maxTwigAngle)
         newTwig = AddArcDir(ptStart, newPoint, vecDir)
         if newTwig:
             vecGrow = rs.CurveTangent(newTwig, rs.CurveDomain(newTwig)[1])
-            RecursiveGrowth(newPoint, vecGrow, newProps, gen+1)
+            RecursiveGrowth(newPoint, vecGrow, newProps, gen+1,attractorPoint)
             
             
             
