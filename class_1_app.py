@@ -7,17 +7,19 @@ import random
 def main():
     
     attractorPoint = rs.GetPoint("select point please")
+    if attractorPoint is None:return
+    
     
     ptStart = rs.AddPoint(0,0,0)
     vecDir = [0,0,1]
     
     minTwigCount = 1 
-    maxTwigCount = 5
-    maxGen = 10
-    maxTwigLength = 5
+    maxTwigCount = 10
+    maxGen = 4
+    maxTwigLength = 10
     lengthMutation = .5
     maxTwigAngle = 90
-    angleMutation = .5
+    angleMutation = .25
     
     
     props = minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation
