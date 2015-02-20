@@ -6,10 +6,13 @@ import random
 
 def main():
     
-    attractorMesh = rs.GetObject("select Surface Please",8)
-    if attractorMesh is None:return 
+    attractorSurface = rs.GetObject("select Surface Please",8)
+    if attractorSurface is None:return 
     
     rs.EnableRedraw(False)
+    
+    
+    SurfaceTensor(attractorSurface,.5,.5)
     
     ptStart = rs.AddPoint(0,0,0)
     vecDir = [0,0,1]
@@ -25,7 +28,7 @@ def main():
     
     props = minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation
     
-    RecursiveGrowth(ptStart, vecDir, props, 0,attractorMesh)
+    RecursiveGrowth(ptStart, vecDir, props, 0,attractorSurface)
     
     rs.EnableRedraw(True)
 
@@ -37,6 +40,9 @@ def getClosestPointOnSurface(point, surface):
     data = rs.BrepClosestPoint(surface,point)
     return data[0]
     
+def getParameterOfClosestPt(point,surface):
+    data = rs.SurfaceClosestPoint(surface,point)
+    return data
     
 def AddArcDir(ptStart, ptEnd, vecDir):
     vecBase = rs.PointSubtract(ptEnd, ptStart)
@@ -64,7 +70,7 @@ def RandomPointInCone(origin, direction, minDistance, maxDistance, maxAngle):
 
 
 
-def RecursiveGrowth(ptStart, vecDir, props, gen, attractorMesh):
+def RecursiveGrowth(ptStart, vecDir, props, gen, srf):
     minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation = props
     
     if gen > maxGen : return
@@ -81,38 +87,30 @@ def RecursiveGrowth(ptStart, vecDir, props, gen, attractorMesh):
     maxN=int(minTwigCount+random.random()* (maxTwigCount-minTwigCount) )
     
     for n in range(0,maxN):
-        meshPoint = getClosestPointOnSurface(ptStart, attractorMesh)
+        surfaceParamter = getParameterOfClosestPt(ptStart, srf)
+        srfVec = SurfaceTensor(srf, surfaceParamter[0],surfaceParamter[1])
+        srfPoint = rs.EvaluateSurface(srf,surfaceParamter[0],surfaceParamter[1])
         
-        newVector = rs.VectorCreate(meshPoint,ptStart)
-        vecDir=newVector
+        vecGrowth = rs.VectorCreate(srfPoint,ptStart)
+        
+        vecCombined = rs.VectorAdd(vecGrowth, srfVec)
+        
+        vecDir=vecCombined
         newPoint = RandomPointInCone(ptStart, vecDir, .25*maxTwigLength, maxTwigLength, maxTwigAngle)
         newTwig = AddArcDir(ptStart, newPoint, vecDir)
         if newTwig:
             vecGrow = rs.CurveTangent(newTwig, rs.CurveDomain(newTwig)[1])
-            RecursiveGrowth(newPoint, vecGrow, newProps, gen+1,attractorMesh)
+            RecursiveGrowth(newPoint, vecGrow, newProps, gen+1,srf)
             
             
             
 
-def SurfaceTensorField(Nu, Nv):
-    idSrf = rs.GetSurfaceObject()[0]
-    uDomain = rs.SurfaceDomain(idSrf, 0)
-    vDomain = rs.SurfaceDomain(idSrf, 1)
-    T = []
-    K = []
-    for i in range(Nu):
-        T.append([])
-        K.append([])
-        u = uDomain[0] + (i/Nu)*(uDomain[1] - uDomain[0])
-        for j in range(Nv):
-            v = vDomain[0] + (j/Nv)*(vDomain[1] - vDomain[0])
-            T[i].append(rs.SurfaceFrame(idSrf,(u,v)))
-            localCurvature = rs.SurfaceCurvature(idSrf,(u,v))
-            if localCurvature is None:
-                K[i].append(T[i][j][1])
-            else:
-                K[i].append(rs.SurfaceCurvature(idSrf,(u,v))[3])
-                return SmoothTensorField(T,K)
+def SurfaceTensor(idSrf,U, V):
+    localCurvature = rs.SurfaceCurvature(idSrf,(U,V))
+    vecDir = localCurvature[3]
+    return vecDir
+    
+    
 
 
 if __name__ == "__main__":
