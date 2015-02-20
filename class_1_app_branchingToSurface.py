@@ -6,7 +6,7 @@ import random
 
 def main():
     
-    attractorMesh = rs.GetObject("select Mesh Please",32)
+    attractorMesh = rs.GetObject("select Surface Please",8)
     if attractorMesh is None:return 
     
     rs.EnableRedraw(False)
@@ -33,7 +33,11 @@ def getClosestPointOnMesh(point, mesh):
     data = rs.MeshClosestPoint(mesh,point)
     return data[0]
 
-
+def getClosestPointOnSurface(point, surface):
+    data = rs.BrepClosestPoint(surface,point)
+    return data[0]
+    
+    
 def AddArcDir(ptStart, ptEnd, vecDir):
     vecBase = rs.PointSubtract(ptEnd, ptStart)
     if rs.VectorLength(vecBase)==0.0: return
@@ -77,7 +81,7 @@ def RecursiveGrowth(ptStart, vecDir, props, gen, attractorMesh):
     maxN=int(minTwigCount+random.random()* (maxTwigCount-minTwigCount) )
     
     for n in range(0,maxN):
-        meshPoint = getClosestPointOnMesh(ptStart, attractorMesh)
+        meshPoint = getClosestPointOnSurface(ptStart, attractorMesh)
         
         newVector = rs.VectorCreate(meshPoint,ptStart)
         vecDir=newVector
@@ -89,6 +93,27 @@ def RecursiveGrowth(ptStart, vecDir, props, gen, attractorMesh):
             
             
             
+
+def SurfaceTensorField(Nu, Nv):
+    idSrf = rs.GetSurfaceObject()[0]
+    uDomain = rs.SurfaceDomain(idSrf, 0)
+    vDomain = rs.SurfaceDomain(idSrf, 1)
+    T = []
+    K = []
+    for i in range(Nu):
+        T.append([])
+        K.append([])
+        u = uDomain[0] + (i/Nu)*(uDomain[1] - uDomain[0])
+        for j in range(Nv):
+            v = vDomain[0] + (j/Nv)*(vDomain[1] - vDomain[0])
+            T[i].append(rs.SurfaceFrame(idSrf,(u,v)))
+            localCurvature = rs.SurfaceCurvature(idSrf,(u,v))
+            if localCurvature is None:
+                K[i].append(T[i][j][1])
+            else:
+                K[i].append(rs.SurfaceCurvature(idSrf,(u,v))[3])
+                return SmoothTensorField(T,K)
+
 
 if __name__ == "__main__":
     main()
