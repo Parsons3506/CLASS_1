@@ -17,13 +17,13 @@ def main():
     ptStart = rs.AddPoint(0,0,0)
     vecDir = [0,0,1]
     
-    minTwigCount = 1 
-    maxTwigCount = 10
-    maxGen = 40
-    maxTwigLength = 50
-    lengthMutation = .23
+    minTwigCount = 5
+    maxTwigCount = 6
+    maxGen = 60
+    maxTwigLength = 100
+    lengthMutation = .5
     maxTwigAngle = 180
-    angleMutation = .25
+    angleMutation = .5
     
     
     props = minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation
@@ -93,9 +93,11 @@ def RecursiveGrowth(ptStart, vecDir, props, gen, srf):
         
         vecGrowth = rs.VectorCreate(srfPoint,ptStart)
         
-        vecCombined = rs.VectorAdd(vecGrowth, srfVec)
+        if vecGrowth.Length > 5 :
+            vecDir=vecGrowth
+        else:
+            vecDir = srfVec
         
-        vecDir=vecCombined
         newPoint = RandomPointInCone(ptStart, vecDir, .25*maxTwigLength, maxTwigLength, maxTwigAngle)
         newTwig = AddArcDir(ptStart, newPoint, vecDir)
         if newTwig:
