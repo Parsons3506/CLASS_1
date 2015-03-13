@@ -16,7 +16,7 @@ def main():
     maxTwigLength = 1
     lengthMutation = .5
     maxTwigAngle = 90
-    angleMutation = .5
+    angleMutation = 0
     
     
     props = minTwigCount, maxTwigCount, maxGen, maxTwigLength, lengthMutation,maxTwigAngle, angleMutation
@@ -45,7 +45,7 @@ def RandomPointInCone(origin, direction, minDistance, maxDistance, maxAngle):
     vecTwig = rs.VectorScale(vecTwig, minDistance + random.random()*(maxDistance-minDistance))
     MutationPlane = rs.PlaneFromNormal((0,0,0), vecTwig)
     vecTwig = rs.VectorRotate(vecTwig, random.random()*maxAngle, MutationPlane[1])
-    vecTwig = rs.VectorRotate(vecTwig, random.random()*360, direction)
+    vecTwig = rs.VectorRotate(vecTwig, random.random()*90, direction)
     return rs.PointAdd(origin, vecTwig)
 
 
